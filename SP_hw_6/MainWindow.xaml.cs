@@ -22,7 +22,9 @@ namespace SP_hw_6
     {
        
 
-         CancellationTokenSource cancel = null;
+        CancellationTokenSource cancel = null;
+
+        
         
         public MainWindow()
         {
@@ -45,11 +47,11 @@ namespace SP_hw_6
             var token = cancel.Token;
             try
             {
-                var task1 = Task.Run(() => FillProgressBarsValue(progressBar1, token));
-                var task2 = task1.ContinueWith(a => FillProgressBarsValue(progressBar2, token));
-                var task3 = task2.ContinueWith(b => FillProgressBarsValue(progressBar3, token));
-                var task4 = task3.ContinueWith(c => FillProgressBarsValue(progressBar4, token));
-                Task.WhenAll(task1, task2, task3, task4);
+                Task task1 = Task.Run(() => FillProgressBarsValue(progressBar1, token));
+                Task task2 = Task.Run(() => FillProgressBarsValue(progressBar2, token));
+                Task task3 = Task.Run(() => FillProgressBarsValue(progressBar3, token));
+                Task task4 = Task.Run(() => FillProgressBarsValue(progressBar4, token));               
+                Task.WhenAll(task1, task2, task3, task4).ContinueWith(a => MessageBox.Show("Копирование завершено"));
             }
             catch (OperationCanceledException ex)
             {
@@ -58,9 +60,7 @@ namespace SP_hw_6
             finally
             {
                 cancel.Dispose();
-            }
-
-            // MessageBox.Show("Копирование завершено!");
+            }           
         }
 
        
@@ -70,7 +70,7 @@ namespace SP_hw_6
 
             for (int i = 0; i < pb.Length; i++)
             {
-                pb[i].Maximum = random.Next(10, 15);
+                pb[i].Maximum = random.Next(100, 15000);
                 tb[i].Text = pb[i].Maximum.ToString();
             }
         }
@@ -82,7 +82,7 @@ namespace SP_hw_6
 
                 while (pb.Value < pb.Maximum)
                 {
-                    pb.Value++;
+                    pb.Value++;                 
 
                     if (token.IsCancellationRequested)
                     {
@@ -90,7 +90,7 @@ namespace SP_hw_6
                     }
                 }
             });
-            Thread.Sleep(1000);
+            
         }
 
         private void Button_Click_Cancel(object sender, RoutedEventArgs e)
